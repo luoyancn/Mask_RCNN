@@ -1841,7 +1841,8 @@ class MaskRCNN():
         self.mode = mode
         self.config = config
         self.model_dir = model_dir
-        self.set_log_dir()
+	if self.mode == 'training':
+            233self.set_log_dir()
         self.keras_model = self.build(mode=mode, config=config)
 
     def build(self, mode, config):
@@ -2284,7 +2285,7 @@ class MaskRCNN():
         self.checkpoint_path = self.checkpoint_path.replace(
             "*epoch*", "{epoch:04d}")
 
-    def train(self, train_dataset, val_dataset, learning_rate, epochs, layers,
+    def train(self, train_dataset, val_dataset, learning_rate, epochs, layers, use_validation=True,
               augmentation=None, custom_callbacks=None, no_augmentation_sources=None):
         """Train the model.
         train_dataset, val_dataset: Training and validation Dataset objects.
@@ -2339,8 +2340,9 @@ class MaskRCNN():
                                          augmentation=augmentation,
                                          batch_size=self.config.BATCH_SIZE,
                                          no_augmentation_sources=no_augmentation_sources)
-        val_generator = data_generator(val_dataset, self.config, shuffle=True,
-                                       batch_size=self.config.BATCH_SIZE)
+	if use_validation:
+            val_generator = data_generator(val_dataset, self.config, shuffle=True,
+                                           batch_size=self.config.BATCH_SIZE)
 
         # Callbacks
         callbacks = [
@@ -2374,8 +2376,8 @@ class MaskRCNN():
             epochs=epochs,
             steps_per_epoch=self.config.STEPS_PER_EPOCH,
             callbacks=callbacks,
-            validation_data=val_generator,
-            validation_steps=self.config.VALIDATION_STEPS,
+            validation_data=val_generator if use_validation else None,
+            validation_steps=self.config.VALIDATION_STEPS if use_validation else None,
             max_queue_size=100,
             workers=workers,
             use_multiprocessing=True,
