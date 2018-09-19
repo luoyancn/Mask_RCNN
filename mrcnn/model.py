@@ -1841,8 +1841,8 @@ class MaskRCNN():
         self.mode = mode
         self.config = config
         self.model_dir = model_dir
-	if self.mode == 'training':
-            233self.set_log_dir()
+        if self.mode == 'training':
+            self.set_log_dir()
         self.keras_model = self.build(mode=mode, config=config)
 
     def build(self, mode, config):
@@ -2340,7 +2340,7 @@ class MaskRCNN():
                                          augmentation=augmentation,
                                          batch_size=self.config.BATCH_SIZE,
                                          no_augmentation_sources=no_augmentation_sources)
-	if use_validation:
+        if use_validation:
             val_generator = data_generator(val_dataset, self.config, shuffle=True,
                                            batch_size=self.config.BATCH_SIZE)
 
